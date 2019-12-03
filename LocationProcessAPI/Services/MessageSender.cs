@@ -1,8 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Web;
+using TextmagicRest;
+using TextmagicRest.Model;
 using Twilio;
+using Twilio.Clients;
 using Twilio.Rest.Api.V2010.Account;
+using LocationProcessAPI.Models;
 using User = LocationProcessAPI.Models.User;
 using LocationProcessAPI.Configuration;
 
@@ -15,9 +24,7 @@ namespace LocationProcessAPI.Services
         public void SendSMS(string messageText)
         {
             // Find your Account Sid and Auth Token at twilio.com/user/account
-            User userFromConfig = LoadConfigurationFile();
-            string pas = userFromConfig.password;
-            var user = userFromConfig.GetType().GetProperty("password");
+            Config userFromConfig = LoadConfigurationFile();
 
             if ( (userFromConfig.password != null) && (userFromConfig.username != null))
             {
@@ -36,7 +43,7 @@ namespace LocationProcessAPI.Services
 
         }
 
-        private static User LoadConfigurationFile()
+        public static Config LoadConfigurationFile()
         {
             try
             {
@@ -51,16 +58,20 @@ namespace LocationProcessAPI.Services
                     .GetSection("appSettings") as AppSettingsSection);
 
                 string username = appSettings.Settings["account_sid"].Value;
-                string password= appSettings.Settings["auth_token"].Value;
-                 
-                return new User(username, password);
+                string password = appSettings.Settings["auth_token"].Value;
+                string mapsUrl =  appSettings.Settings["maps_url"].Value;
+                string mapsKey =  appSettings.Settings["maps_key"].Value;
+     
+                return new Config(username, password, mapsUrl, mapsKey);
             }
             catch (Exception x)
             {
                 Console.WriteLine(x.Message);
             }
-            return new User();
+            return new Config();
         }
+
+  
 
     }
 }

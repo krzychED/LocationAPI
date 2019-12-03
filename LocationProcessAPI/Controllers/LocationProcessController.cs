@@ -1,5 +1,6 @@
 ﻿using LocationProcessAPI.Models;
 using LocationProcessAPI.Services;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,13 +18,13 @@ namespace LocationProcessAPI.Controllers
 
  
         [HttpPost]
-        public Location PostNewLocation([FromBody]Location location)
+        public JObject PostNewLocation([FromBody]Location location)
         {
-
-            MessageSender messageSender = new MessageSender();
-            messageSender.SendSMS("elo");
-            
-            return location;
+            string mapsAPIresponse = GoogleMapsService.GetPlaceFromMapsAPI(location);
+            /*            MessageSender messageSender = new MessageSender();
+                        messageSender.SendSMS("elo");*/
+            JObject jsonAPIresponse = new MessageFormatterService().FormattMessage(mapsAPIresponse);
+            return jsonAPIresponse;
         }
     }
 }
