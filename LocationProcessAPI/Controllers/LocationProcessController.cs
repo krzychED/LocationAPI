@@ -18,13 +18,14 @@ namespace LocationProcessAPI.Controllers
 
  
         [HttpPost]
-        public JObject PostNewLocation([FromBody]Location location)
+        public string PostNewLocation([FromBody]Location location)
         {
             string mapsAPIresponse = GoogleMapsService.GetPlaceFromMapsAPI(location);
-            /*            MessageSender messageSender = new MessageSender();
-                        messageSender.SendSMS("elo");*/
-            JObject jsonAPIresponse = new MessageFormatterService().FormattMessage(mapsAPIresponse);
-            return jsonAPIresponse;
+            string placeName = new MessageFormatterService().FormattMessage(mapsAPIresponse);
+            string message = RandomMessageService.GetMessageFromList() + placeName;
+            MessageSender messageSender = new MessageSender();
+            messageSender.SendSMS(message);
+         return message;
         }
     }
 }

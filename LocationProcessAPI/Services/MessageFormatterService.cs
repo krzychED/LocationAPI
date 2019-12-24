@@ -14,14 +14,14 @@ namespace LocationProcessAPI.Services
 {
     public class MessageFormatterService
     {
-        public JObject FormattMessage(string apiResponse)
+        public string FormattMessage(string apiResponse)
         {
             JsonFormatter(apiResponse);
             var Jobj = JObject.Parse(apiResponse);
 
             string placeName = ChangeJsonValueIntoPlaceName(Jobj, "long_name");
             Console.WriteLine(placeName);
-            return Jobj;
+            return placeName;
         }
 
         public string JsonFormatter(string json)
